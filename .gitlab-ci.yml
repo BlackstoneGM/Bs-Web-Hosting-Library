@@ -20,6 +20,6 @@ deploy:
         "$USERNAME"
         "$PASSWORD"
         "cd BsWebServer"
-        "put .\BsWebServer\bin\Release\netstandard2.0\BsWebServer.dll"
+        "put ./BsWebServer/bin/Release/netstandard2.0/BsWebServer.dll"
         "quit"
 
