@@ -1,0 +1,26 @@
+image: microsoft/dotnet:latest
+
+
+stages:
+  - build
+  - deploy
+
+before_script:
+  - "dotnet restore"
+
+build:
+  stage: build
+  script:
+    - "dotnet build BsWebServer.sln -p:Configuration=Release"
+
+deploy:
+    stage: deploy
+    script:
+     - "ftp gitlabbsstudios.ddns.net"
+     - "$USERNAME"
+     - "$PASSWORD"
+     - "cd BsWebServer"
+     - "put .\BsWebServer\bin\Release\netstandard2.0\BsWebServer.dll"
+     - "quit"
+
+
