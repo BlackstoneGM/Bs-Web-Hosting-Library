@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BsWebServer.Handling
+namespace BsWebServer.Https.Handling
 {
-    public class HttpResponse
+    public class HttpsResponse
     {
         /*
             HTTP/1.1 200 OK
@@ -23,10 +25,12 @@ namespace BsWebServer.Handling
         public string contenttype;
         public string content;
 
-        NetworkStream stream;
+        public Dictionary<string, Cookie> cookies = new Dictionary<string, Cookie>();
+
+        SslStream stream;
         TcpClient client;
 
-        public HttpResponse(NetworkStream stream, TcpClient client)
+        public HttpsResponse(SslStream stream, TcpClient client)
         {
             this.stream = stream;
             this.client = client;
@@ -50,12 +54,17 @@ namespace BsWebServer.Handling
 
         public void closeResponse()
         {
-            byte[] finalbytes = Encoding.ASCII.GetBytes(this.ToString());
+            byte[] finalbytes = Encoding.UTF8.GetBytes(this.ToString());
 
             stream.Write(finalbytes, 0, finalbytes.Length);
             stream.Flush();
             stream.Close();
             client.Close();
+        }
+
+        public void addCookie(Cookie cookie)
+        {
+            cookies.Add(cookie.Name ,cookie);
         }
     }
 }

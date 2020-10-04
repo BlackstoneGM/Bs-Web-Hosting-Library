@@ -6,9 +6,9 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BsWebServer.Handling
+namespace BsWebServer.Https.Handling
 {
-    public class HttpRequest
+    public class HttpsRequest
     {
         public string requesttype;
         public string location;
@@ -16,8 +16,9 @@ namespace BsWebServer.Handling
         public HostAddress host;
         public string connectiontype;
         public string useragent;
+        public Dictionary<string, Cookie> cookies = new Dictionary<string, Cookie>();
 
-        public HttpRequest(string httprawrequest)
+        public HttpsRequest(string httprawrequest)
         {
             string[] splitrequest = httprawrequest.Split('\n');
             for(int i = 0; i < splitrequest.Length; i++)
@@ -29,24 +30,33 @@ namespace BsWebServer.Handling
                     location = temp[1];
                     httpversion = temp[2];
                 }
-
-                if (splitrequest[i].StartsWith("Host"))
+                else if (splitrequest[i].StartsWith("Host"))
                 {
                     string temp = splitrequest[i].Remove(0, 6);
                     host = HostAddress.Parse(temp);
 
                 }
-
-                if (splitrequest[i].StartsWith("Connection"))
+                else if (splitrequest[i].StartsWith("Connection"))
                 {
                     string temp = splitrequest[i].Remove(0, 12);
                     connectiontype = temp;
                 }
-
-                if (splitrequest[i].StartsWith("User-Agent"))
+                else if (splitrequest[i].StartsWith("User-Agent"))
                 {
                     string temp = splitrequest[i].Remove(0, 12);
                     useragent = temp;
+                }
+                else if (splitrequest[i].StartsWith("Cookie"))
+                {
+                    string temp = splitrequest[i].Remove(0, 12);
+                    temp.Replace(" ", "");
+                    string[] temp2 = temp.Split(';');
+                    for (int x = 0; x  < temp2.Length; x++)
+                    {
+                        string[] temp3 = temp2[x].Split('=');
+                        Cookie cookie = new Cookie(temp3[0], temp3[1]);
+                        cookies.Add(temp3[0], cookie);
+                    }
                 }
             }
         }
