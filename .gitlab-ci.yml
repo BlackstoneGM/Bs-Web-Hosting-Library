@@ -1,0 +1,21 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  artifacts:
+    untracked: true
+  script:
+    - |
+        dotnet restore
+        dotnet build BsWebServer.sln -p:Configuration=Release
+
+deploy:
+    stage: deploy
+    dependencies: 
+    - build
+    script:
+     - |
+        ftp -in -s:C:\GitLab-Runner\ftpuploadbswebserver.txt gitlabbsstudios.ddns.net
+
