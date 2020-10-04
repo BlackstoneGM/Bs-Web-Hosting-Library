@@ -1,21 +1,14 @@
+image: mcr.microsoft.com/dotnet/core/sdk:3.1
+
 stages:
   - build
-  - deploy
 
 build:
   stage: build
   artifacts:
-    untracked: true
+    paths:
+      - "/builds/bs-studios/bs-web-hosting-library/BsWebServer/BsWebServer/bin/Release/netstandard2.0/*"
   script:
-    - |
-        dotnet restore
-        dotnet build BsWebServer.sln -p:Configuration=Release
-
-deploy:
-    stage: deploy
-    dependencies: 
-    - build
-    script:
-     - |
-        ftp -in -s:C:\GitLab-Runner\ftpuploadbswebserver.txt gitlabbsstudios.ddns.net
-
+    - cd "BsWebServer"
+    - dotnet restore
+    - dotnet build -c "Release"
