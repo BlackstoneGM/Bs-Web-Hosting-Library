@@ -7,7 +7,7 @@ build:
   stage: build
   artifacts:
     paths:
-      - "/builds/bs-studios/bs-web-hosting-library/BsWebServer/BsWebServer/bin/Release/netstandard2.0/*"
+      - "/builds/bs-studios/bs-web-hosting-library/BsWebServer/bin/Release/netstandard2.0/*"
   script:
     - cd "BsWebServer"
     - dotnet restore
