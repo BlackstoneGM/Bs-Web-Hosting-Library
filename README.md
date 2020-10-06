@@ -44,7 +44,7 @@ Please note, the current version of this library only supports pfx bundle certif
     {
         HttpsListener httpsListener = new HttpsListener("*", 443);
         httpsListener.WebServerRequest += HttpsServerhandler;
-        httpsListener.x509Certificate.Import("(path to certificate)", "(password for certificate)", X509KeyStorageFlags.MachineKeySet);
+        httpsListener.x509Certificate = new X509Certificate2("(path to certificate)", "(password for certificate)", X509KeyStorageFlags.MachineKeySet);
         httpsListener.Start();
 
         while (httpsListener.isRunning)
