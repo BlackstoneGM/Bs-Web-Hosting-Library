@@ -101,6 +101,7 @@ namespace BsWebServer.Https.Listeners
             }
             catch(Exception e)
             {
+                Exception ex = e;
                 throw new BsWebServer.Exceptions.HttpsMissingCertException("Missing SSL Certificate In Https Listener");
             }
         }
