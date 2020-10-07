@@ -86,10 +86,20 @@ namespace BsWebServer.Http.Listeners
 
         public void Start()
         {
-            server = new TcpListener(IPAddress.Parse(ip), port);
-            server.Start();
-            listenthread.Start();
-            watchthread.Start();
+            if(ip == "*")
+            {
+                server = new TcpListener(IPAddress.Any, port);
+                server.Start();
+                listenthread.Start();
+                watchthread.Start();
+            }
+            else
+            {
+                server = new TcpListener(IPAddress.Parse(ip), port);
+                server.Start();
+                listenthread.Start();
+                watchthread.Start();
+            }
         }
 
         protected virtual void OnWebServerRequest(HttpServerEventArgs se)
