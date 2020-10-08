@@ -39,13 +39,13 @@ namespace BsWebServer.Https.Handling
         public override string ToString()
         {
             string statussign;
-            if(status == 200)
+            if(status == BsWebServer.Variables.StatusCodes.OK)
             {
                 statussign = "OK";
             }
             else
             {
-                status = 200;
+                status = BsWebServer.Variables.StatusCodes.OK;
                 statussign = "OK";
             }
 
