@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace BsWebServer.Enums
 {
-    class StatusCodes
-    {
-        
-    }
+    public enum StatusCodes {
+		  OK = 200,
+      NotFound = 404
+	};
 }
