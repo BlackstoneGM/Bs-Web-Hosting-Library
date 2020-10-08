@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -20,7 +20,7 @@ namespace BsWebServer.Https.Handling
         */
 
         public string httpversion;
-        public int status;
+        public BsWebServer.Variables.StatusCodes status;
         public double contentlength;
         public string contenttype;
         public string content;
