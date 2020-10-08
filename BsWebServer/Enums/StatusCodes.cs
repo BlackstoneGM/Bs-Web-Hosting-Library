@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BsWebServer.Enums
+namespace BsWebServer.Variables
 {
     public enum StatusCodes {
 		  OK = 200,
