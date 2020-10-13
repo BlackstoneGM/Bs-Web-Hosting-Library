@@ -14,7 +14,7 @@ A Library Designed to Handle The Main Load For Making A Custom Web Server
         HttpListener httpListener = new HttpListener("*", 8080);
         httpListener.WebServerRequest += HttpServerhandler;
         httpListener.Start();
-        while (httpsListener.isRunning)
+        while (httpListener.isRunning)
         {
             Thread.Sleep(100);
         }
@@ -24,7 +24,7 @@ A Library Designed to Handle The Main Load For Making A Custom Web Server
     public static void HttpServerhandler(object sender, HttpServerEventArgs se)
     {
         se.resp.httpversion = se.req.httpversion;
-        se.resp.status = 200;
+        se.resp.status = StatusCodes.OK;
         se.resp.contenttype = MimeTypes.HTML;
         string html = "<h1>This Is An Example</h1>";
         se.resp.content = html;
@@ -57,7 +57,7 @@ Please note, the current version of this library only supports pfx bundle certif
     public static void HttpsServerhandler(object sender, HttpsServerEventArgs se)
     {
         se.resp.httpversion = se.req.httpversion;
-        se.resp.status = 200;
+        se.resp.status = StatusCodes.OK;
         se.resp.contenttype = MimeTypes.HTML;
         string html = "<h1>This Is An Example</h1>";
         se.resp.content = html;
