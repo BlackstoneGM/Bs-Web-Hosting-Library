@@ -22,7 +22,7 @@ namespace BsWebServer.Http.Handling
         public BsWebServer.Variables.StatusCodes status;
         public double contentlength;
         public string contenttype;
-        public string content;
+        public byte[] content;
 
         public Dictionary<string, Cookie> cookies = new Dictionary<string, Cookie>();
 
@@ -51,9 +51,30 @@ namespace BsWebServer.Http.Handling
             return $"{httpversion.Remove(8)} {status} {statussign}\nContent-Length: {contentlength}\nContent-Type: {contenttype}\nServer: BSServer\nData: {DateTime.UtcNow}\n\n{content}";
         }
 
+        public byte[] ToBytes()
+        {
+            string statussign;
+            if (status == BsWebServer.Variables.StatusCodes.OK)
+            {
+                statussign = "OK";
+            }
+            else
+            {
+                status = BsWebServer.Variables.StatusCodes.OK;
+                statussign = "OK";
+            }
+
+            string temp = $"{httpversion.Remove(8)} {status} {statussign}\nContent-Length: {contentlength}\nContent-Type: {contenttype}\nServer: BSServer\nData: {DateTime.UtcNow}\n\n";
+            byte[] tempbyte = Encoding.ASCII.GetBytes(temp);
+            byte[] finbyte = new byte[tempbyte.Length + content.Length];
+            tempbyte.CopyTo(finbyte, 0);
+            content.CopyTo(finbyte, tempbyte.Length);
+            return finbyte;
+        }
+
         public void closeResponse()
         {
-            byte[] finalbytes = Encoding.ASCII.GetBytes(this.ToString());
+            byte[] finalbytes = ToBytes();
 
             stream.Write(finalbytes, 0, finalbytes.Length);
             stream.Flush();

@@ -1,7 +1,9 @@
-﻿using BsWebServer.Http.Events;
+using BsWebServer.Http.Events;
 using BsWebServer.Http.Handling;
+using BsWebServer.Variables;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -34,6 +36,7 @@ namespace BsWebServer.Http.Listeners
             this.port = port;
             listenthread = new Thread(Listen);
             watchthread = new Thread(Watch);
+            WebServerRequest += HttpServerhandler;
         }
 
         void Listen()
@@ -69,7 +72,6 @@ namespace BsWebServer.Http.Listeners
             }
             finally
             {
-                server.Stop();
                 isRunning = false;
             }
         }
@@ -82,6 +84,7 @@ namespace BsWebServer.Http.Listeners
                 Thread.Sleep(100);
             }
             isRunning = false;
+            server.Stop();
         }
 
         public void Start()
@@ -106,5 +109,38 @@ namespace BsWebServer.Http.Listeners
         {
             WebServerRequest?.Invoke(this, se);
         }
+
+        public void useStatic(DirectoryInfo dir)
+        {
+            staticdirectory.Add(dir);
+        }
+
+        private List<DirectoryInfo> staticdirectory = new List<DirectoryInfo>();
+
+        private void HttpServerhandler(object sender, HttpServerEventArgs se)
+        {
+            if(staticdirectory.Count == 0)
+            {
+                return;
+            }
+            else
+            {
+                foreach(DirectoryInfo directoryInfo in staticdirectory)
+                {
+                    if(File.Exists(Path.Combine(directoryInfo.FullName, se.req.location)))
+                    {
+                        se.resp.httpversion = se.req.httpversion;
+                        se.resp.status = StatusCodes.OK;
+                        se.resp.contenttype = MimeTypes.getFileMimeType(Path.Combine(directoryInfo.FullName, se.req.location));
+                        byte[] bytesresponse = File.ReadAllBytes(Path.Combine(directoryInfo.FullName, se.req.location));
+                        se.resp.content = bytesresponse;
+                        se.resp.contentlength = bytesresponse.Length;
+
+                        se.resp.closeResponse();
+                    }
+                }
+            }
+        }
+
     }
 }
