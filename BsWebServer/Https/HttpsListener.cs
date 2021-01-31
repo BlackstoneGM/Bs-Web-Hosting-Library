@@ -63,7 +63,14 @@ namespace BsWebServer.Https.Listeners
 
                             SslStream sslStream = new SslStream(client.GetStream());
 
-                            sslStream.AuthenticateAsServer(x509Certificate, false, System.Security.Authentication.SslProtocols.Default, false);
+                            try
+                            {
+                                sslStream.AuthenticateAsServer(x509Certificate, false, System.Security.Authentication.SslProtocols.Tls12, false);
+                            }
+                            catch(Exception e)
+                            {
+
+                            }
 
                             bytes1 = new Byte[1];
                             bytes2 = new Byte[1023];
