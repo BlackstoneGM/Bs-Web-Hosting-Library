@@ -4,6 +4,16 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Blackstone</Authors>
     <Company>Bs Studios</Company>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
+    <PackageReference Include="StreamExtended" Version="1.0.201" />
+  </ItemGroup>
 
 </Project>

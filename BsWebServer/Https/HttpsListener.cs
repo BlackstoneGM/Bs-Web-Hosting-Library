@@ -1,5 +1,7 @@
 ﻿using BsWebServer.Https.Events;
 using BsWebServer.Https.Handling;
+using StreamExtended;
+using StreamExtended.Network;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Nito.AsyncEx.Synchronous;
 
 namespace BsWebServer.Https.Listeners
 {
@@ -61,15 +64,28 @@ namespace BsWebServer.Https.Listeners
 
                             data = null;
 
-                            SslStream sslStream = new SslStream(client.GetStream());
+                            int bufferSize = 4096;
+                            DefaultBufferPool bufferPool = new DefaultBufferPool();
+                            CustomBufferedStream buffstream = new CustomBufferedStream(client.GetStream(), bufferPool, bufferSize);
+                            SslStream sslStream = null;
+                            var task = SslTools.PeekClientHello(buffstream, bufferPool);
+                            ClientHelloInfo clientSslHelloInfo = task.WaitAndUnwrapException();
 
-                            try
-                            {
-                                sslStream.AuthenticateAsServer(x509Certificate, false, System.Security.Authentication.SslProtocols.Tls12, false);
-                            }
-                            catch(Exception e)
-                            {
+                            SslTools.PeekClientHello(buffstream, bufferPool);
 
+                            if (clientSslHelloInfo != null)
+                            {
+                                string sniHostName = clientSslHelloInfo.Extensions?.FirstOrDefault(x => x.Value.Name == "server_name").Value.Data;
+                                sslStream = new SslStream(buffstream);
+                                if (x509Certificate.SubjectName.Name == sniHostName)
+                                {
+                                    sslStream.AuthenticateAsServer(x509Certificate, false, System.Security.Authentication.SslProtocols.Tls12, false);
+                                }
+                                else
+                                {
+                                    client.Close();
+                                    continue;
+                                }
                             }
 
                             bytes1 = new Byte[1];
